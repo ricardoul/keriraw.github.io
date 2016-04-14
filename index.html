@@ -32,20 +32,23 @@
 				vurl = document.getElementById('videoUrl').value;
 				vautoplay = document.getElementById('videoAutoplay').checked;
 				vvideoloop = document.getElementById('videoLoop').checked;
-				console.log(vurl)
+
 				if (vurl.match(/.*v=[^\/\&\?]+.*/)!==null) {
 					parsedUrl = vurl.match(/v=([^\?\/?&]+)/);
-					console.log(parsedUrl)
+					console.log('1', finalLink)
 					finalLink = finalLink.replace(/embed\/[^\?\/?&]+/, 'embed/' + parsedUrl[1]);
+					console.log('2', finalLink)
 					finalLink = finalLink.replace(/&playlist=[^\?\/?&]+/, '&playlist=' + parsedUrl[1]);
+					console.log('3', finalLink)
 				} else {
 					finalLink = finalLink.replace(/embed\/[^\?\/?&]*/, 'embed/' + vurl);
 					finalLink = finalLink.replace(/&playlist=[^\?\/?&]*/, '&playlist=' + vurl);
 				}
-
+				console.log('4', finalLink)
 				finalLink = vautoplay ? finalLink.replace(/autoplay=\d/, "autoplay=1") : finalLink.replace(/autoplay=\d/, "autoplay=0");
+				console.log('5', finalLink)
 				finalLink = vvideoloop ? finalLink.replace(/loop=\d/, "loop=1") : finalLink.replace(/loop=\d/, "loop=0");
-
+				console.log('6', finalLink)
 				// Play the video
 				document.getElementById("videoFrame").setAttribute("src", finalLink);
 			}
