@@ -32,9 +32,10 @@
 				vurl = document.getElementById('videoUrl').value;
 				vautoplay = document.getElementById('videoAutoplay').checked;
 				vvideoloop = document.getElementById('videoLoop').checked;
-				
+				console.log(vurl)
 				if (vurl.match(/.*v=[^\/\&\?]+.*/)!==null) {
 					parsedUrl = vurl.match(/v=([^\?\/?&]+)/);
+					console.log(parsedUrl)
 					finalLink = finalLink.replace(/embed\/[^\?\/?&]+/, 'embed/' + parsedUrl[1]);
 					finalLink = finalLink.replace(/&playlist=[^\?\/?&]+/, '&playlist=' + parsedUrl[1]);
 				} else {
