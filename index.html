@@ -33,7 +33,7 @@
 				vautoplay = document.getElementById('videoAutoplay').checked;
 				vvideoloop = document.getElementById('videoLoop').checked;
 				
-				if (vurl.match(/v=[^\?\/?\&]+/)!==null) {
+				if (vurl.match(/v=\w+/)!==null) {
 					parsedUrl = vurl.match(/v=([^\?\/?&]+)/);
 					finalLink = finalLink.replace(/embed\/[^\?\/?&]+/, 'embed/' + parsedUrl[1]);
 					finalLink = finalLink.replace(/&playlist=[^\?\/?&]+/, '&playlist=' + parsedUrl[1]);
