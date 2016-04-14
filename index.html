@@ -5,7 +5,7 @@
 	</head>
 	<body>
 		<div>
-			<iframe id="videoFrame" width="560" height="315" src="https://www.youtube.com/embed/?autoplay=0&loop=0" frameborder="0" allowfullscreen></iframe>
+			<iframe id="videoFrame" width="560" height="315" src="https://www.youtube.com/embed/?autoplay=0&loop=0&playlist=" frameborder="0" allowfullscreen></iframe>
 		</div>
 		
 		
@@ -36,8 +36,10 @@
 				if (vurl.match(/v=[^\?\/?\&]+/)!==null) {
 					parsedUrl = vurl.match(/v=([^\?\/?&]+)/);
 					finalLink = finalLink.replace(/embed\/[^\?\/?&]+/, 'embed/' + parsedUrl[1]);
+					finalLink = finalLink.replace(/&playlist=[^\?\/?&]+/, '&playlist=' + parsedUrl[1]);
 				} else {
 					finalLink = finalLink.replace(/embed\/[^\?\/?&]*/, 'embed/' + vurl);
+					finalLink = finalLink.replace(/&playlist=[^\?\/?&]*/, '&playlist=' + vurl);
 				}
 
 				finalLink = vautoplay ? finalLink.replace(/autoplay=\d/, "autoplay=1") : finalLink.replace(/autoplay=\d/, "autoplay=0");
