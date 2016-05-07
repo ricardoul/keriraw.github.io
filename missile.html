@@ -16,46 +16,68 @@
 			var c = document.getElementById("missileCanvas");
 			var	ctx = c.getContext("2d");
 
-			var parameters = {
-				baseHeight: 50
+			var params = {
+				baseHeight: 50,
+				baseCount: 5
+			};
+
+			var colors = {
+				terrain: '#660D0D',
+				tower: '#474747'
 			}
 
 			// Creates the terrain
 			function terrainCreate(){
 				terrainBase();
-				terrainMoundCreate(5);
-			}
+				terrainTower(params.baseCount);
+			};
 
 			// Creates the lower part of the terrain
 			function terrainBase(){
-				height = parameters.baseHeight;
-				ctx.fillStyle = '#660D0D';
-				ctx.fillRect(0,c.height-height,c.width,height);	
-			}
+				ctx.fillStyle = colors.terrain;
+				ctx.fillRect(0,c.height-params.baseHeight,c.width,params.baseHeight);	
+			};
 
 			// Calculates where the mounds are located
-			function terrainMoundCreate(amount){
+			function terrainTower(amount){
 				for (var i = 1; i < amount+1; i++) {
 					var location = (c.width/(amount+1))*i;
-					terrainMoundDraw(location);
+					terrainMound(location);
+					towerCreate(location);
 				}
-			}
+			};
 
-			// Creates every single mound above the base
-			function terrainMoundDraw(xMiddleCoord){
-				ctx.fillStyle = '#660D0D';
+			// Creates a single mound
+			function terrainMound(xMiddleCoord){
+				ctx.fillStyle = colors.terrain;
 				xMiddleCoord = xMiddleCoord-50;
-				var heightCoord = c.height-50;
+				var heightCoord = c.height-params.baseHeight;
 				ctx.beginPath();
 				ctx.moveTo(xMiddleCoord,heightCoord); //100,100 | 0,0 
 				ctx.lineTo(xMiddleCoord+100,heightCoord); //200,100 | 100,0
 				ctx.lineTo(xMiddleCoord+70,heightCoord-20); //170,80 | 70,-20
 				ctx.lineTo(xMiddleCoord+30,heightCoord-20); //130,80 | 30,-20
 				ctx.fill();
-			}
+			};
+
+			// Creates a single tower
+			function towerCreate(xMiddleCoord){
+				//40,40
+				ctx.fillStyle = colors.tower;
+				xMiddleCoord = xMiddleCoord;
+				// Calculates the height in the middle of the tower, canvas heigh - (terrain base + mound height + flat tower part)
+				var heightCoord = c.height-(params.baseHeight+20+5);
+				ctx.beginPath();
+				// Creates the upper part of the tower (the half circle)
+				ctx.arc(xMiddleCoord,heightCoord,15,0,1*Math.PI,true);
+				ctx.fillRect(xMiddleCoord-15,heightCoord,30,5)
+				ctx.fill();
+			};
 
 			terrainCreate();
-			
+
+
+			// Just 'debugging' help
 			setInterval(second, 1000);
 
 			function second(){
