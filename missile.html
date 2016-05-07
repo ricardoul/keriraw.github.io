@@ -1,0 +1,74 @@
+
+<html>
+	<head>
+		<title>Missile</title>
+	</head>
+	<body style="background-color: #101010">
+		<div>
+			<a href="./index.html">Back</a>
+		</div>
+		<div align="middle">
+			<canvas id="missileCanvas" width="800" height="600" style="border:1px solid #FF0000; background-color: #000000;"></canvas> 
+		</div>
+
+		<script>
+			// Gets the canvas context
+			var c = document.getElementById("missileCanvas");
+			var	ctx = c.getContext("2d");
+
+			var parameters = {
+				baseHeight: 50
+			}
+
+			// Creates the terrain
+			function terrainCreate(){
+				terrainBase();
+				terrainMoundCreate(5);
+			}
+
+			// Creates the lower part of the terrain
+			function terrainBase(){
+				height = parameters.baseHeight;
+				ctx.fillStyle = '#660D0D';
+				ctx.fillRect(0,c.height-height,c.width,height);	
+			}
+
+			// Calculates where the mounds are located
+			function terrainMoundCreate(amount){
+				for (var i = 1; i < amount+1; i++) {
+					var location = (c.width/(amount+1))*i;
+					terrainMoundDraw(location);
+				}
+			}
+
+			// Creates every single mound above the base
+			function terrainMoundDraw(xMiddleCoord){
+				ctx.fillStyle = '#660D0D';
+				xMiddleCoord = xMiddleCoord-50;
+				var heightCoord = c.height-50;
+				ctx.beginPath();
+				ctx.moveTo(xMiddleCoord,heightCoord); //100,100 | 0,0 
+				ctx.lineTo(xMiddleCoord+100,heightCoord); //200,100 | 100,0
+				ctx.lineTo(xMiddleCoord+70,heightCoord-20); //170,80 | 70,-20
+				ctx.lineTo(xMiddleCoord+30,heightCoord-20); //130,80 | 30,-20
+				ctx.fill();
+			}
+
+			terrainCreate();
+			
+			setInterval(second, 1000);
+
+			function second(){
+				ctx.fillStyle = 'black';
+				ctx.fillRect(10,220,50,30);
+
+				var now = new Date();
+				var sec = now.getSeconds();
+				ctx.font = "30px Arial";
+				ctx.fillStyle = "white";
+				ctx.fillText(sec,10,250);
+			}
+
+		</script>
+	</body>
+</html>
