@@ -137,9 +137,9 @@
 				enemies.push({
 					name: 'enemy' + enemies.length,
 					// TODO; move coords outside screen
-					xCoord: Math.floor(Math.random() * (800 - 0 + 0)) + 0,
+					xCoord: Math.floor(Math.random() * 1000) -200,
 					yCoord: Math.floor(Math.random() * -200),
-					xDest: Math.floor(Math.random() * (800 - 0 + 0)) + 0,
+					xDest: Math.floor(Math.random() * 800),
 					yDest: 600,
 					status: 'alive'
 				});
@@ -151,11 +151,12 @@
 				// Delete previous possition
 				ctx.fillStyle = colors.background;
 				ctx.fillRect(enemy.xCoord,enemy.yCoord,2,2);
+				// TODO; proper movement, pythagoras?
 				// Add new position
 				enemy.yCoord += 2;
-				// Check empty location
+				// TODO; Check empty location
 				// Remove from enemies
-				if (enemy.yCoord > 500) {
+				if (enemy.yCoord > 600) {
 					enemies.splice(index, 1)
 				} else {
 					// Paint new position
@@ -165,8 +166,13 @@
 			})
 		};
 
+		// TODO;
+		function explosion(center){
+
+		}
+
 		function acceptancePercent(accept){
-			var value = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+			var value = Math.floor(Math.random() * 100) + 1;
 			return value <= accept;
 		};
 
