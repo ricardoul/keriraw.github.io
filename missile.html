@@ -8,89 +8,184 @@
 			<a href="./index.html">Back</a>
 		</div>
 		<div align="middle">
-			<canvas id="missileCanvas" width="800" height="600" style="border:1px solid #FF0000; background-color: #000000;"></canvas> 
+			<canvas id="missileCanvas" width="800" height="600" style="border:1px solid #FF0000; background-color: #000000;"></canvas>
 		</div>
-
-		<script>
-			// Gets the canvas context
-			var c = document.getElementById("missileCanvas");
-			var	ctx = c.getContext("2d");
-
-			var params = {
-				baseHeight: 50,
-				baseCount: 5
-			};
-
-			var colors = {
-				terrain: '#660D0D',
-				tower: '#474747'
-			}
-
-			// Creates the terrain
-			function terrainCreate(){
-				terrainBase();
-				terrainTower(params.baseCount);
-			};
-
-			// Creates the lower part of the terrain
-			function terrainBase(){
-				ctx.fillStyle = colors.terrain;
-				ctx.fillRect(0,c.height-params.baseHeight,c.width,params.baseHeight);	
-			};
-
-			// Calculates where the mounds are located
-			function terrainTower(amount){
-				for (var i = 1; i < amount+1; i++) {
-					var location = (c.width/(amount+1))*i;
-					terrainMound(location);
-					towerCreate(location);
-				}
-			};
-
-			// Creates a single mound
-			function terrainMound(xMiddleCoord){
-				ctx.fillStyle = colors.terrain;
-				xMiddleCoord = xMiddleCoord-50;
-				var heightCoord = c.height-params.baseHeight;
-				ctx.beginPath();
-				ctx.moveTo(xMiddleCoord,heightCoord); //100,100 | 0,0 
-				ctx.lineTo(xMiddleCoord+100,heightCoord); //200,100 | 100,0
-				ctx.lineTo(xMiddleCoord+70,heightCoord-20); //170,80 | 70,-20
-				ctx.lineTo(xMiddleCoord+30,heightCoord-20); //130,80 | 30,-20
-				ctx.fill();
-			};
-
-			// Creates a single tower
-			function towerCreate(xMiddleCoord){
-				//40,40
-				ctx.fillStyle = colors.tower;
-				xMiddleCoord = xMiddleCoord;
-				// Calculates the height in the middle of the tower, canvas heigh - (terrain base + mound height + flat tower part)
-				var heightCoord = c.height-(params.baseHeight+20+5);
-				ctx.beginPath();
-				// Creates the upper part of the tower (the half circle)
-				ctx.arc(xMiddleCoord,heightCoord,15,0,1*Math.PI,true);
-				ctx.fillRect(xMiddleCoord-15,heightCoord,30,5)
-				ctx.fill();
-			};
-
-			terrainCreate();
-
-
-			// Just 'debugging' help
-			setInterval(second, 1000);
-
-			function second(){
-				ctx.fillStyle = 'black';
-				ctx.fillRect(10,220,50,30);
-
-				var now = new Date();
-				var sec = now.getSeconds();
-				ctx.font = "30px Arial";
-				ctx.fillStyle = "white";
-				ctx.fillText(sec,10,250);
-			}
-
-		</script>
 	</body>
+
+	<script>
+		// Gets the canvas context
+		var c = document.getElementById("missileCanvas");
+		var	ctx = c.getContext("2d");
+
+		var params = {
+			baseHeight: 50,
+			baseCount: 5,
+			towerBaseHeight: 5,
+			maxEnemies: 10
+		};
+
+		var game = {
+			status: 'loading',
+			score: 0
+		};
+
+		var towers = [];
+
+		var missiles = [];
+
+		var enemies = [];
+
+		var colors = {
+			background: '#000000',
+			terrain: '#660D0D',
+			tower: '#474747',
+			enemy: '#FF99FF',
+			missile: '#FFFF99'
+		}
+
+		// Creates the terrain
+		function terrainCreate(){
+			terrainBase();
+			terrainTower(params.baseCount);
+		};
+
+		// Creates the lower part of the terrain
+		function terrainBase(){
+			ctx.fillStyle = colors.terrain;
+			ctx.fillRect(0,c.height-params.baseHeight,c.width,params.baseHeight);
+		};
+
+		// Calculates where the mounds are located
+		function terrainTower(amount){
+			for (var i = 1; i < amount+1; i++) {
+				var location = Math.floor((c.width/(amount+1))*i);
+				terrainMound(location);
+				towerCreate(location);
+			}
+		};
+
+		// Creates a single mound
+		function terrainMound(xMiddleCoord){
+			ctx.fillStyle = colors.terrain;
+			xMiddleCoord = xMiddleCoord-50;
+			var heightCoord = c.height-params.baseHeight;
+			ctx.beginPath();
+			ctx.moveTo(xMiddleCoord,heightCoord); //100,100 | 0,0
+			ctx.lineTo(xMiddleCoord+100,heightCoord); //200,100 | 100,0
+			ctx.lineTo(xMiddleCoord+70,heightCoord-20); //170,80 | 70,-20
+			ctx.lineTo(xMiddleCoord+30,heightCoord-20); //130,80 | 30,-20
+			ctx.fill();
+		};
+
+		// Creates a single tower
+		function towerCreate(xMiddleCoord){
+			ctx.fillStyle = colors.tower;
+			// Calculates the height in the middle of the tower, canvas heigh - (terrain base + mound height + flat tower part)
+			var	heightCoord = c.height-(params.baseHeight+20+params.towerBaseHeight);
+			ctx.beginPath();
+			// Creates the upper part of the tower (the half circle)
+			ctx.arc(xMiddleCoord,heightCoord,15,0,1*Math.PI,true);
+			ctx.fillRect(xMiddleCoord-15,heightCoord,30,params.towerBaseHeight)
+			ctx.fill();
+
+			towers.push({
+				name: 'tower' + towers.length,
+				status: 'active',
+				center: xMiddleCoord,
+				charge: 100
+			});
+		};
+
+		// TODO;
+		function titleScreen(){
+			ctx.font = "30px Arial";
+			ctx.fillStyle = "white";
+			ctx.fillText('Missile',10,100);
+			ctx.fillText('Click anywhere to start',10,150);
+		};
+
+		// TODO;
+		function scoreScreen(){
+			clearScreen();
+			ctx.font = "30px Arial";
+			ctx.fillStyle = "white";
+			ctx.fillText('GAME OVER',10,100);
+			ctx.fillText('Click anywhere to restart',10,150);
+		};
+
+		function clearScreen(){
+			ctx.fillStyle = colors.background;
+			ctx.fillRect(0,0,800,600);
+		}
+
+		function initialiseGame(){
+			clearScreen();
+			terrainCreate();
+			game.status = 'playing';
+			c.removeEventListener('click', initialiseGame);
+			selection();
+		};
+
+		function enemyControl(){
+			enemySpawn();
+			enemyMove();
+		}
+
+		function enemySpawn(){
+			// TODO; make acceptance vary dependign on enemies
+			if (enemies.length < params.maxEnemies && acceptancePercent(5)){
+				enemies.push({
+					name: 'enemy' + enemies.length,
+					// TODO; move coords outside screen
+					xCoord: Math.floor(Math.random() * (800 - 0 + 0)) + 0,
+					yCoord: Math.floor(Math.random() * -200),
+					xDest: Math.floor(Math.random() * (800 - 0 + 0)) + 0,
+					yDest: 600,
+					status: 'alive'
+				});
+			}
+		};
+
+		function enemyMove(){
+			enemies.forEach(function(enemy, index){
+				// Delete previous possition
+				ctx.fillStyle = colors.background;
+				ctx.fillRect(enemy.xCoord,enemy.yCoord,2,2);
+				// Add new position
+				enemy.yCoord += 2;
+				// Check empty location
+				// Remove from enemies
+				if (enemy.yCoord > 500) {
+					enemies.splice(index, 1)
+				} else {
+					// Paint new position
+					ctx.fillStyle = colors.enemy;
+					ctx.fillRect(enemy.xCoord,enemy.yCoord,2,2);
+				}
+			})
+		};
+
+		function acceptancePercent(accept){
+			var value = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+			return value <= accept;
+		};
+
+		// Starts the game
+		selection();
+		function selection(){
+			if (game.status === 'playing'){
+				// Starts the game
+				 var enemiesTime = setInterval(enemyControl, 50);
+			} else if (game.status === 'over'){
+				clearInterval(enemiesTime);
+				// Score screen
+				scoreScreen();
+				c.addEventListener('click', initialiseGame);
+			} else {
+				// Title screen
+				titleScreen();
+				c.addEventListener('click', initialiseGame);
+			}
+		};
+	</script>
 </html>
