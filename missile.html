@@ -57,7 +57,7 @@
 
 		// Calculates where the mounds are located
 		function terrainTower(amount){
-			for (var i = 1; i < amount+1; i++) {
+			for (var i = 1; i < amount+1; i++){
 				var location = Math.floor((c.width/(amount+1))*i);
 				terrainMound(location);
 				towerCreate(location);
@@ -163,7 +163,7 @@
 			enemies.forEach(function(enemy, index){
 				// Delete previous possition
 				ctx.fillStyle = colors.background;
-				ctx.fillRect(enemy.xCoord,enemy.yCoord,2,2);
+				ctx.fillRect(enemy.xCoord-1,enemy.yCoord-1,4,4);
 				// Add new position
 				if (enemy.xOrigin < enemy.xDest){
 					enemy.xCoord += enemy.xSpeed;
@@ -173,7 +173,7 @@
 				enemy.yCoord += enemy.ySpeed;
 				// TODO; Check empty location
 				// Remove from enemies
-				if (enemy.yCoord > 600) {
+				if (enemy.yCoord > 600 || enemy.status === 'dead'){
 					enemies.splice(index, 1)
 				} else {
 					// Paint new position
