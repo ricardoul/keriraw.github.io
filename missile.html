@@ -134,13 +134,26 @@
 		function enemySpawn(){
 			// TODO; make acceptance vary dependign on enemies
 			if (enemies.length < params.maxEnemies && acceptancePercent(5)){
+				var xCoord = Math.floor(Math.random() * 800),
+					yCoord = Math.floor(Math.random() * -200),
+					xDest = Math.floor(Math.random() * 800),
+					yDest = 600,
+					xDelta = Math.abs(xDest - xCoord),
+					yDelta = Math.abs(yDest - yCoord),
+					travelLength = Math.sqrt((xDelta*xDelta)+(yDelta*yDelta));
 				enemies.push({
 					name: 'enemy' + enemies.length,
-					// TODO; move coords outside screen
-					xCoord: Math.floor(Math.random() * 1000) -200,
-					yCoord: Math.floor(Math.random() * -200),
-					xDest: Math.floor(Math.random() * 800),
-					yDest: 600,
+					xCoord: xCoord,
+					yCoord: yCoord,
+					xOrigin: xCoord,
+					yOrigin: yCoord,
+					xDest: xDest,
+					yDest: yDest,
+					xDelta: xDelta,
+					yDelta: yDelta,
+					xSpeed: (xDelta/travelLength)*2,
+					ySpeed: (yDelta/travelLength)*2,
+					travelLength: travelLength,
 					status: 'alive'
 				});
 			}
@@ -151,9 +164,13 @@
 				// Delete previous possition
 				ctx.fillStyle = colors.background;
 				ctx.fillRect(enemy.xCoord,enemy.yCoord,2,2);
-				// TODO; proper movement, pythagoras?
 				// Add new position
-				enemy.yCoord += 2;
+				if (enemy.xOrigin < enemy.xDest){
+					enemy.xCoord += enemy.xSpeed;
+				} else {
+					enemy.xCoord -= enemy.xSpeed;
+				}
+				enemy.yCoord += enemy.ySpeed;
 				// TODO; Check empty location
 				// Remove from enemies
 				if (enemy.yCoord > 600) {
