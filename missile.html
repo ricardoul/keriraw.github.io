@@ -163,7 +163,7 @@
 			enemies.forEach(function(enemy, index){
 				// Delete previous possition
 				ctx.fillStyle = colors.background;
-				ctx.clearRect(enemy.xCoord,enemy.yCoord,2,2);
+				ctx.clearRect(enemy.xCoord-1,enemy.yCoord-1,4,4);
 				// Add new position
 				if (enemy.xOrigin < enemy.xDest){
 					enemy.xCoord += enemy.xSpeed;
