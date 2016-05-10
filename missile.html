@@ -162,8 +162,7 @@
 		function enemyMove(){
 			enemies.forEach(function(enemy, index){
 				// Delete previous possition
-				ctx.fillStyle = colors.background;
-				ctx.fillRect(enemy.xCoord,enemy.yCoord,2,2);
+				
 				// Add new position
 				if (enemy.xOrigin < enemy.xDest){
 					enemy.xCoord += enemy.xSpeed;
@@ -178,6 +177,8 @@
 				} else {
 					// Paint new position
 					ctx.fillStyle = colors.enemy;
+					ctx.fillRect(enemy.xCoord,enemy.yCoord,2,2);
+					ctx.fillStyle = colors.background;
 					ctx.fillRect(enemy.xCoord,enemy.yCoord,2,2);
 				}
 			})
