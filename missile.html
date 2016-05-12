@@ -100,7 +100,7 @@
 			});
 		};
 
-		// TODO;
+		// TODO:
 		function titleScreen(){
 			back.font = "30px Arial";
 			back.fillStyle = "white";
@@ -108,7 +108,7 @@
 			back.fillText('Click anywhere to start',10,150);
 		};
 
-		// TODO;
+		// TODO:
 		function scoreScreen(){
 			clearScreen();
 			back.font = "30px Arial";
@@ -139,14 +139,8 @@
 			selection();
 		};
 
-		function enemyControl(){
-			clearPlayground();
-			enemySpawn();
-			enemyMove();
-		}
-
 		function enemySpawn(){
-			// TODO; make acceptance vary dependign on enemies
+			// TODO: make acceptance vary dependign on enemies
 			if (enemies.length < params.maxEnemies && acceptancePercent(5)){
 				var xCoord = Math.floor(Math.random() * 800),
 					yCoord = Math.floor(Math.random() * -200),
@@ -165,6 +159,7 @@
 					yDest: yDest,
 					xDelta: xDelta,
 					yDelta: yDelta,
+					// TODO: adjust enemy speed
 					xSpeed: (xDelta/travelLength)*2,
 					ySpeed: (yDelta/travelLength)*2,
 					travelLength: travelLength,
@@ -182,7 +177,7 @@
 					enemy.xCoord -= enemy.xSpeed;
 				}
 				enemy.yCoord += enemy.ySpeed;
-				// TODO; Check empty location
+				// TODO: Check empty location
 				// Remove from enemies
 				if (enemy.yCoord > 600 || enemy.status === 'dead'){
 					enemies.splice(index, 1)
@@ -194,7 +189,7 @@
 			})
 		};
 
-		// TODO;
+		// TODO:
 		function explosion(center){
 
 		}
@@ -204,14 +199,20 @@
 			return value <= accept;
 		};
 
+		function controller(){
+			clearPlayground();
+			enemySpawn();
+			enemyMove();
+			selection();
+		}
+
 		// Starts the game
 		selection();
 		function selection(){
 			if (game.status === 'playing'){
 				// Starts the game
-				var enemiesTime = setInterval(enemyControl, 50);
+				window.requestAnimationFrame(controller);
 			} else if (game.status === 'over'){
-				clearInterval(enemiesTime);
 				// Score screen
 				scoreScreen();
 				p.addEventListener('click', initialiseGame);
