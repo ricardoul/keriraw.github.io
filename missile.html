@@ -235,14 +235,10 @@
 		};
 
 		function calculateProximity(object){
-			if (object.xOrigin < object.xDest && object.yOrigin < object.yDest){
-				return object.xCoord > object.xDest && object.yCoord > object.yDest;
-			} else if (object.xOrigin > object.xDest && object.yOrigin > object.yDest){
-				return object.xCoord < object.xDest && object.yCoord < object.yDest;
-			} else if (object.xOrigin < object.xDest && object.yOrigin > object.yDest){
-				return object.xCoord > object.xDest && object.yCoord < object.yDest;
-			} else if (object.xOrigin > object.xDest && object.yOrigin < object.yDest){
-				return object.xCoord < object.xDest && object.yCoord > object.yDest;
+			if (Math.abs(object.xDest-object.xCoord) < object.xSpeed * params.gameSpeed && Math.abs(object.yDest-object.yCoord) < object.ySpeed * params.gameSpeed){
+				return true;
+			} else {
+				return false;
 			}
 		}
 
@@ -301,9 +297,10 @@
 				enemyMove();
 				missileMove();
 				//addTrails();
-				rechargeTowers();
 				// just add previous positions calculating on the fly with position - speed - gameSpeed
+				rechargeTowers();
 				//evaluateGame
+				// increase speed, add score
 				window.requestAnimationFrame(controller);
 			} else if (game.status === 'over'){
 				p.removeEventListener('click', spawnMissile);
