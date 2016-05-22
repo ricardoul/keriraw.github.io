@@ -13,7 +13,11 @@
 	</body>
 
 	<script>
-		// Gets the canvas context
+		// ***************
+		// **  CONTEXT  **
+		// ***************
+
+		// Gets each canva context
 		var b = document.getElementById("missileBackground");
 		var back = b.getContext("2d");
 
@@ -21,13 +25,14 @@
 		var play = p.getContext("2d");
 
 		var params = {
-			gameSpeed: 2,
+			gameSpeed: 1.4,
 			baseHeight: 50,
 			baseCount: 5,
 			towerBaseHeight: 5,
 			maxEnemies: 10,
 			trail: false,
-			trailLength: 3
+			trailLength: 3,
+			maxExplosionSize: 50
 		};
 
 		var game = {
@@ -35,19 +40,23 @@
 			score: 0
 		};
 
-		var towers = [];
-
-		var missiles = [];
-
-		var enemies = [];
+		var towers = [],
+			missiles = [],
+			enemies = [],
+			explosions = [];
 
 		var colors = {
 			background: '#000000',
 			terrain: '#660D0D',
 			tower: '#474747',
 			enemy: '#FF0000',
-			missile: '#00FF00'
-		}
+			missile: '#00FF00',
+			explosion: '#F8FF00'
+		};
+
+		// ***************
+		// **  TERRAIN  **
+		// ***************
 
 		// Creates the terrain
 		function terrainCreate(){
@@ -66,7 +75,7 @@
 			for (var i = 1; i < amount+1; i++){
 				var location = Math.floor((b.width/(amount+1))*i);
 				terrainMound(location);
-				towerCreate(location);
+				towerSpawn(location);
 			}
 		};
 
@@ -76,40 +85,16 @@
 			xMiddleCoord = xMiddleCoord-50;
 			var heightCoord = b.height-params.baseHeight;
 			back.beginPath();
-			back.moveTo(xMiddleCoord,heightCoord); //100,100 | 0,0
-			back.lineTo(xMiddleCoord+100,heightCoord); //200,100 | 100,0
-			back.lineTo(xMiddleCoord+70,heightCoord-20); //170,80 | 70,-20
-			back.lineTo(xMiddleCoord+30,heightCoord-20); //130,80 | 30,-20
+			back.moveTo(xMiddleCoord,heightCoord);
+			back.lineTo(xMiddleCoord+100,heightCoord);
+			back.lineTo(xMiddleCoord+70,heightCoord-20);
+			back.lineTo(xMiddleCoord+30,heightCoord-20);
 			back.fill();
 		};
 
-		// Creates a single tower
-		function towerCreate(xMiddleCoord){
-			back.fillStyle = colors.tower;
-			// Calculates the height in the middle of the tower, canvas heigh - (terrain base + mound height + flat tower part)
-			var heightCoord = b.height-(params.baseHeight+20+params.towerBaseHeight);
-			back.beginPath();
-			// Creates the upper part of the tower (the half circle)
-			back.arc(xMiddleCoord,heightCoord,15,0,1*Math.PI,true);
-			back.fillRect(xMiddleCoord-15,heightCoord,30,params.towerBaseHeight)
-			back.fill();
-
-			towers.push({
-				name: 'tower' + towers.length,
-				status: 'alive',
-				center: xMiddleCoord,
-				charge: 100
-			});
-		};
-
-		function rechargeTowers(){
-			towers.forEach(function(tower){
-				if (tower.charge < 100){
-					// TODO: adjust recharge rate
-					tower.charge += 1 * params.gameSpeed;
-				}
-			});
-		};
+		// **************
+		// **  ENEMYS  **
+		// **************
 
 		function enemySpawn(){
 			// TODO: make acceptance vary dependign on enemies
@@ -160,9 +145,36 @@
 			});
 		};
 
-		// TODO:
-		function explosion(center){
+		// **************
+		// **  TOWERS  **
+		// **************
 
+		// Creates a single tower
+		function towerSpawn(xMiddleCoord){
+			back.fillStyle = colors.tower;
+			// Calculates the height in the middle of the tower, canvas height - (terrain base + mound height + flat tower part)
+			var heightCoord = b.height-(params.baseHeight+20+params.towerBaseHeight);
+			back.beginPath();
+			// Creates the upper part of the tower (the half circle)
+			back.arc(xMiddleCoord,heightCoord,15,0,1*Math.PI,true);
+			back.fillRect(xMiddleCoord-15,heightCoord,30,params.towerBaseHeight)
+			back.fill();
+
+			towers.push({
+				name: 'tower' + towers.length,
+				status: 'alive',
+				center: xMiddleCoord,
+				charge: 100
+			});
+		};
+
+		function rechargeTowers(){
+			towers.forEach(function(tower){
+				if (tower.charge < 100){
+					// TODO: adjust recharge rate
+					tower.charge += 1 * params.gameSpeed;
+				}
+			});
 		};
 
 		function findShootingTower(){
@@ -178,8 +190,11 @@
 			}
 		};
 
+		// ****************
+		// **  MISSILES  **
+		// ****************
+
 		function spawnMissile(e){
-			// TODO: if no tower available don't spawn
 			var rect = p.getBoundingClientRect(),
 				xDest = Math.floor(e.clientX - rect.left),
 				yDest = Math.floor(e.clientY - rect.top),
@@ -212,40 +227,72 @@
 		function missileMove(){
 			missiles.forEach(function(missile, index){
 				// Calculate new position
-				if (missile.xOrigin < missile.xDest){
+				if (missile.xOrigin < missile.xDest) {
 					missile.xCoord += missile.xSpeed;
 				} else {
 					missile.xCoord -= missile.xSpeed;
 				}
-				if (missile.yOrigin < missile.yDest){
+				if (missile.yOrigin < missile.yDest) {
 					missile.yCoord += missile.ySpeed;
 				} else {
 					missile.yCoord -= missile.ySpeed;
 				}
 				// TODO: Check empty location
 				// Remove from missiles
-				if (calculateProximity(missile) || missile.status === 'dead'){
-					missiles.splice(index, 1)
+				if (calculateDestination(missile) || missile.status === 'dead'){
+					spawnExplosion(missile.xCoord, missile.yCoord);
+					missiles.splice(index, 1);
 				} else {
 					// Paint new position
 					play.fillStyle = colors.missile;
 					play.fillRect(missile.xCoord,missile.yCoord,2,2);
 				}
+			})
+		};
+
+		// ******************
+		// **  EXPLOSIONS  **
+		// ******************
+
+		function spawnExplosion(xCoord, yCoord){
+			explosions.push({
+				name: 'explosion' + explosions.length,
+				xCoord: Math.floor(xCoord),
+				yCoord: Math.floor(yCoord),
+				radius: 1
 			});
 		};
 
-		function calculateProximity(object){
-			if (Math.abs(object.xDest-object.xCoord) < object.xSpeed * params.gameSpeed && Math.abs(object.yDest-object.yCoord) < object.ySpeed * params.gameSpeed){
-				return true;
-			} else {
-				return false;
-			}
-		}
+		function drawExplosions(){
+			explosions.forEach(function(explosion, index){
+				explosion.radius += params.gameSpeed/2;
+				if (explosion.radius >= params.maxExplosionSize) {
+					explosions.splice(index, 1);
+				} else {
+					play.beginPath();
+					play.fillStyle = colors.explosion;
+					play.arc(explosion.xCoord,explosion.yCoord,explosion.radius,0,2*Math.PI);
+					play.fill();
+				}
+			})
+		};
+
+		// ***************
+		// **  HELPERS  **
+		// ***************
+
+		function calculateDestination(projectile){
+			return (Math.abs(projectile.xDest-projectile.xCoord) < projectile.xSpeed * params.gameSpeed && Math.abs(projectile.yDest-projectile.yCoord) < projectile.ySpeed * params.gameSpeed);
+		};
 
 		function acceptancePercent(accept){
 			var value = Math.floor(Math.random() * 100) + 1;
 			return value <= accept;
 		};
+
+		// ***************
+		// **  SCREENS  **
+		// ***************
 
 		// TODO:
 		function titleScreen(){
@@ -264,7 +311,10 @@
 			back.fillText('Click anywhere to restart',10,150);
 		};
 
-		//clearScreen
+		// **************
+		// **  CLEARS  **
+		// **************
+
 		function clearBackground(){
 			back.clearRect(0,0,800,600);
 		};
@@ -278,6 +328,11 @@
 			clearPlayground();
 		};
 
+		// ************
+		// **  MAIN  **
+		// ************
+
+		// Resets the game to a new one
 		function initialiseGame(){
 			clearAll();
 			terrainCreate();
@@ -287,17 +342,17 @@
 			controller();
 		};
 
-		// Starts the game
+		// Game controller
 		controller();
 		function controller(){
 			if (game.status === 'playing'){
-				// Starts the game
 				clearPlayground();
+				drawExplosions();
 				enemySpawn();
 				enemyMove();
 				missileMove();
-				//addTrails();
 				// just add previous positions calculating on the fly with position - speed - gameSpeed
+				//addTrails();
 				rechargeTowers();
 				//evaluateGame
 				// increase speed, add score
