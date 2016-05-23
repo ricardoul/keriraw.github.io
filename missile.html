@@ -298,8 +298,9 @@
 		};
 
 		function verifyEmptySpace(xCoord, yCoord){
-			var dataImage = play.getImageData(xCoord, yCoord, 1, 1);
-			return dataImage.data[0] || dataImage.data[1] || dataImage.data[2];
+			var imgPlayData = play.getImageData(xCoord, yCoord, 1, 1);
+			var imgBackData = back.getImageData(xCoord, yCoord, 1, 1);
+			return imgPlayData.data[0] || imgPlayData.data[1] || imgPlayData.data[2] || imgBackData.data[0] || imgBackData.data[1] || imgBackData.data[2];
 		};
 
 		// ***************
