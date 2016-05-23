@@ -133,10 +133,14 @@
 					enemy.xCoord -= enemy.xSpeed;
 				}
 				enemy.yCoord += enemy.ySpeed;
-				// TODO: Check empty location
+				// Verifies if space is empty
+				if (verifyEmptySpace(enemy.xCoord, enemy.yCoord)) {
+					enemy.status = 'dead';
+				}
 				// Remove from enemies
 				if (enemy.yCoord > 600 || enemy.status === 'dead'){
-					enemies.splice(index, 1)
+					spawnExplosion(enemy.xCoord, enemy.yCoord);
+					enemies.splice(index, 1);
 				} else {
 					// Paint new position
 					play.fillStyle = colors.enemy;
@@ -237,7 +241,10 @@
 				} else {
 					missile.yCoord -= missile.ySpeed;
 				}
-				// TODO: Check empty location
+				// Verifies if space is empty
+				if (verifyEmptySpace(missile.xCoord, missile.yCoord)) {
+					missile.status = 'dead';
+				}
 				// Remove from missiles
 				if (calculateDestination(missile) || missile.status === 'dead'){
 					spawnExplosion(missile.xCoord, missile.yCoord);
@@ -288,6 +295,11 @@
 		function acceptancePercent(accept){
 			var value = Math.floor(Math.random() * 100) + 1;
 			return value <= accept;
+		};
+
+		function verifyEmptySpace(xCoord, yCoord){
+			var dataImage = play.getImageData(xCoord, yCoord, 1, 1);
+			return dataImage.data[0] || dataImage.data[1] || dataImage.data[2];
 		};
 
 		// ***************
