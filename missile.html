@@ -29,7 +29,7 @@
 			baseHeight: 50,
 			baseCount: 5,
 			towerBaseHeight: 5,
-			maxEnemies: 10,
+			maxEnemies: 8,
 			trail: false,
 			trailLength: 3,
 			maxExplosionSize: 50
@@ -92,9 +92,9 @@
 			back.fill();
 		};
 
-		// **************
-		// **  ENEMYS  **
-		// **************
+		// ***************
+		// **  ENEMIES  **
+		// ***************
 
 		function enemySpawn(){
 			// TODO: make acceptance vary dependign on enemies
@@ -153,6 +153,7 @@
 		// **  TOWERS  **
 		// **************
 
+		// TODO: separate spawn and draw
 		// Creates a single tower
 		function towerSpawn(xMiddleCoord){
 			back.fillStyle = colors.tower;
@@ -176,16 +177,16 @@
 			towers.forEach(function(tower){
 				if (tower.charge < 100){
 					// TODO: adjust recharge rate
-					tower.charge += 1 * params.gameSpeed;
+					tower.charge += 0.5 * params.gameSpeed;
 				}
 			});
 		};
 
 		function findShootingTower(){
-			var shootingTower = towers.find(function (tower){
+			var shootingTower = towers.find(function(tower){
 				return tower.status === 'alive' && tower.charge >= 100;
 			})
-			,	shootingTowerIndex = towers.findIndex(function (tower){
+			,	shootingTowerIndex = towers.findIndex(function(tower){
 				return tower.status === 'alive' && tower.charge >= 100;
 			});
 			if(shootingTowerIndex >= 0){
@@ -268,6 +269,7 @@
 				yCoord: Math.floor(yCoord),
 				radius: 1
 			});
+			evaluateTowerDestruction(xCoord, yCoord);
 		};
 
 		function drawExplosions(){
@@ -280,6 +282,20 @@
 					play.fillStyle = colors.explosion;
 					play.arc(explosion.xCoord,explosion.yCoord,explosion.radius,0,2*Math.PI);
 					play.fill();
+				}
+			})
+		};
+
+		function evaluateTowerDestruction(xCoord, yCoord){
+			// TODO: move this to params
+			var damageZone = 15 + params.maxExplosionSize;
+			towers.forEach(function(tower){
+				var xDelta = Math.abs(tower.center - xCoord),
+					// TODO: improved calculation to not do it everytime
+					yDelta = Math.abs(b.height - params.baseHeight - params.towerBaseHeight - 20 - yCoord),
+					explosionDistance = Math.sqrt((xDelta*xDelta)+(yDelta*yDelta));
+				if (tower.status === 'alive' && explosionDistance < damageZone) {
+					tower.status = 'dead';
 				}
 			})
 		};
@@ -317,7 +333,7 @@
 
 		// TODO:
 		function scoreScreen(){
-			clearScreen();
+			clearAll();
 			back.font = "30px Arial";
 			back.fillStyle = "white";
 			back.fillText('GAME OVER',10,100);
@@ -337,6 +353,10 @@
 		};
 
 		function clearAll(){
+			towers = [];
+			missiles = [];
+			enemies = [];
+			explosions = [];
 			clearBackground();
 			clearPlayground();
 		};
@@ -355,6 +375,12 @@
 			controller();
 		};
 
+		function evaluateGame(){
+			if (towers.every(function(tower){return tower.status === 'dead';})) {
+				game.status = 'over';
+			}
+		};
+
 		// Game controller
 		controller();
 		function controller(){
@@ -367,7 +393,7 @@
 				// just add previous positions calculating on the fly with position - speed - gameSpeed
 				//addTrails();
 				rechargeTowers();
-				//evaluateGame
+				evaluateGame();
 				// increase speed, add score
 				window.requestAnimationFrame(controller);
 			} else if (game.status === 'over'){
