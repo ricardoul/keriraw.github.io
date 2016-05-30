@@ -91,7 +91,7 @@
 
 		function evaluateProximity(){
 			fish.forEach(function(dFish, dIndex){
-				if ((dFish.xCoord < 30 || dFish.xCoord > 770 || dFish.yCoord < 30 || dFish.yCoord > 770) && acceptancePercent(1) ) {
+				if ((dFish.xCoord < 30 || dFish.xCoord > 770 || dFish.yCoord < 30 || dFish.yCoord > 770) && acceptancePercent(1)) {
 					dFish.status = 'sick';
 				}
 				fish.forEach(function(aFish, aIndex){
@@ -113,8 +113,8 @@
 			fish.forEach(function(dFish){
 				if (dFish.status === 'sick' && dFish.life > 0){
 					dFish.life -= 1;
-				}else if (dFish.status === 'sick') {
-					dFish.status === 'dead';
+				} else if (dFish.life === 0) {
+					dFish.status = 'dead';
 				} else if (dFish.status === 'fine' && dFish.fertility < 100){
 					dFish.fertility += 1;
 				}
