@@ -1,0 +1,20 @@
+<html>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<head>
+		<title>Testing persistance</title>
+	</head>
+	<body style="background-color: #101010">
+		<textarea cols="66" rows="22" id="textarea" style="overflow: hidden;"></textarea>
+	</body>
+
+	<script type="text/javascript">
+		$("#textarea").on("keyup", function() {
+			localStorage.setItem('textoGuardado', document.getElementById("textarea").value);
+		});
+
+		$(document).ready(function() {
+			var data = localStorage.getItem('textoGuardado');
+			$("#textarea").val(data);
+		});
+	</script>
+</html>
