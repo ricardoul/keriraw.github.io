@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Testing AJAX</title>
+</head>
+<script src="jQuery.js"></script>
+<script type="text/javascript">
+function mostrarValores(){
+	document.getElementById('datosMostrar').innerHTML = ""
+	$.getJSON('datos.json', function(data)
+	{
+		console.log(data);
+		// datos2.forEach(function (numb)
+		// {
+		// 	if (numb > document.getElementById('valor').value)
+		// 	{
+		// 		document.getElementById('datosMostrar').innerHTML += "<p>"+numb+"</p>"
+		// 	}
+		// })
+	})
+}
+</script>
+<body>
+<h1>COSAS</h1>
+Valor: <input type="number" name="Valor" id="valor">
+<button id="done" onclick="mostrarValores()">Done</button>
+<div id="datosMostrar"></div>
+</body>
+</html>
