@@ -39,7 +39,7 @@ function controller ()
 		monkey.draw();
 		if (monkey.status === 'dead')
 		{
-			monkeys.splice(i, 1);
+			monkeys.splice(index, 1);
 		}
 	})
 	window.requestAnimationFrame(controller);
