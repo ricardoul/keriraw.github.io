@@ -4,8 +4,8 @@ var eleWater = document.getElementById('waterCanvas')
 ,	conMonkey = eleMonkey.getContext('2d')
 ,	configs = {
 	 	gameSpeed: 1.4
-	,	startingFish: 25
-	,	maxFertility: 300
+	,	startingFish: 50
+	,	maxFertility: 200
 	,	maxLife: 5000
 	,	poisonSize: 30
 	}
@@ -20,6 +20,7 @@ var eleWater = document.getElementById('waterCanvas')
 		total: 0
 	,	peak: 0
 	,	eldest: 0
+	,	gamePlay: 0
 	}
 ,	monkeys = []
 ;
