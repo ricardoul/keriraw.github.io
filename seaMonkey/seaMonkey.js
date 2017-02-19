@@ -4,11 +4,11 @@ var eleWater = document.getElementById('waterCanvas')
 ,	conMonkey = eleMonkey.getContext('2d')
 ,	configs = {
 	 	gameSpeed: 1.4
-	,	startingFish: 20
+	,	startingFish: 25
 	,	maxFertility: 250
 	,	startingFertility: 200
 	,	maxLife: 5000
-	,	poisonSize: 30
+	,	poisonSize: 25
 	}
 ,	palette = {
 	 	water: '#061539'
@@ -25,12 +25,12 @@ var eleWater = document.getElementById('waterCanvas')
 	for (var i = configs.startingFish - 1; i >= 0; i--) {
 		monkeys.push(new Monkey());
 	}
+	console.log(`${monkeys.length} monkeys started!`);
 	controller();
 })();
 
 function controller ()
 {
-	console.info(monkeys.length);
 	clearMonkeys();
 	monkeys.forEach(function (monkey, index)
 	{
@@ -41,6 +41,7 @@ function controller ()
 		if (monkey.status === 'dead')
 		{
 			monkeys.splice(index, 1);
+			console.log(`A monkey died at the age of ${monkey.age}, there are ${monkeys.length} monkeys now.`);
 		}
 	})
 	window.requestAnimationFrame(controller);
@@ -52,7 +53,8 @@ function Monkey ()
 	this.yCoord = Math.floor(Math.random() * 500)+50;
 	this.status = 'fine';
 	this.fertility = configs.startingFertility;
-	this.life  = configs.maxLife;
+	this.life = configs.maxLife;
+	this.age = 0;
 
 	this.move = function ()
 	{
@@ -101,6 +103,7 @@ function Monkey ()
 
 	this.grow = function ()
 	{
+		this.age += 1;
 		if (this.status === 'sick' && this.life > 0)
 		{
 			this.life -= 1;
@@ -128,6 +131,7 @@ function Monkey ()
 				if (acceptancePercent(25) && monkeys[i].status === 'fine' && this.status === 'fine' && monkeys[i].fertility === configs.maxFertility && this.fertility === configs.maxFertility)
 				{
 					monkeys.push(new Monkey());
+					console.log(`A new monkey is born! They are ${monkeys.length} monkeys now.`);
 					monkeys[i].fertility = 0;
 					this.fertility = 0;
 				}
