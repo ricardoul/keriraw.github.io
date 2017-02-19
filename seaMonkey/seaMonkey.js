@@ -6,6 +6,7 @@ var eleWater = document.getElementById('waterCanvas')
 	 	gameSpeed: 1.4
 	,	startingFish: 20
 	,	maxFertility: 250
+	,	startingFertility: 200
 	,	maxLife: 5000
 	,	poisonSize: 30
 	}
@@ -50,7 +51,7 @@ function Monkey ()
 	this.xCoord = Math.floor(Math.random() * 700)+50;
 	this.yCoord = Math.floor(Math.random() * 500)+50;
 	this.status = 'fine';
-	this.fertility = 0;
+	this.fertility = configs.startingFertility;
 	this.life  = configs.maxLife;
 
 	this.move = function ()
