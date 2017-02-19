@@ -5,7 +5,7 @@ var eleWater = document.getElementById('waterCanvas')
 ,	configs = {
 	 	gameSpeed: 1.4
 	,	startingFish: 20
-	,	maxFertility: 200
+	,	maxFertility: 250
 	,	maxLife: 5000
 	,	poisonSize: 30
 	}
@@ -124,7 +124,7 @@ function Monkey ()
 		for (var i = 0; i < index; i++)
 		{
 			if (Math.abs(this.xCoord-monkeys[i].xCoord) < 2 && Math.abs(this.yCoord-monkeys[i].yCoord) < 2) {
-				if (acceptancePercent(5) && monkeys[i].status === 'fine' && this.status === 'fine' && monkeys[i].fertility === configs.maxFertility && this.fertility === configs.maxFertility)
+				if (acceptancePercent(25) && monkeys[i].status === 'fine' && this.status === 'fine' && monkeys[i].fertility === configs.maxFertility && this.fertility === configs.maxFertility)
 				{
 					monkeys.push(new Monkey());
 					monkeys[i].fertility = 0;
