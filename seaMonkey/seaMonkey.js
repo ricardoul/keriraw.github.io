@@ -1,17 +1,19 @@
-var eleWater = document.getElementById("waterCanvas")
-,	conWater = eleWater.getContext("2d")
-,	eleMonkey = document.getElementById("playCanvas")
-,	conMonkey = eleMonkey.getContext("2d")
+var eleWater = document.getElementById('waterCanvas')
+,	conWater = eleWater.getContext('2d')
+,	eleMonkey = document.getElementById('playCanvas')
+,	conMonkey = eleMonkey.getContext('2d')
 ,	configs = {
-	 	gameSpeed: 1.4,
-		startingFish: 20,
-		maxFertility: 200,
-		maxLife: 5000
+	 	gameSpeed: 1.4
+	,	startingFish: 20
+	,	maxFertility: 200
+	,	maxLife: 5000
+	,	poisonSize: 30
 	}
 ,	palette = {
-	 	water: '#061539',
-		monkeyFine: '#FF7400',
-		monkeySick: '#27E000'
+	 	water: '#061539'
+	,	poison: '#002E2E'
+	,	monkeyFine: '#FF7400'
+	,	monkeySick: '#27E000'
 	}
 ,	monkeys = []
 ;
@@ -20,135 +22,153 @@ var eleWater = document.getElementById("waterCanvas")
 {
  	fillWater();
 	for (var i = configs.startingFish - 1; i >= 0; i--) {
-		monkeys.push({"a":"a"});
+		monkeys.push(new Monkey());
 	}
-	console.log(monkeys);
 	controller();
 })();
 
 function controller ()
 {
-	console.log();
+	console.info(monkeys.length);
+	clearMonkeys();
+	monkeys.forEach(function (monkey, index)
+	{
+		monkey.move();
+		monkey.grow();
+		monkey.live(index);
+		monkey.draw();
+		if (monkey.status === 'dead')
+		{
+			monkeys.splice(i, 1);
+		}
+	})
 	window.requestAnimationFrame(controller);
 };
 
+function Monkey ()
+{
+	this.xCoord = Math.floor(Math.random() * 700)+50;
+	this.yCoord = Math.floor(Math.random() * 500)+50;
+	this.status = 'fine';
+	this.fertility = 0;
+	this.life  = configs.maxLife;
+
+	this.move = function ()
+	{
+		if (this.xCoord > 780)
+		{
+			this.xCoord -= configs.gameSpeed;
+		}
+		else if (this.xCoord < 20)
+		{
+			this.xCoord += configs.gameSpeed;
+		}
+		else
+		{
+			random = (Math.random() * 100);
+			if (random > 50)
+			{
+				this.xCoord -= configs.gameSpeed;
+			}
+			else if (random < 50)
+			{
+				this.xCoord += configs.gameSpeed;
+			}
+		}
+
+		if (this.yCoord > 580)
+		{
+			this.yCoord -= configs.gameSpeed;
+		}
+		else if (this.yCoord < 20)
+		{
+			this.yCoord += configs.gameSpeed;
+		}
+		else
+		{
+			random = (Math.random() * 100);
+			if (random > 50)
+			{
+				this.yCoord -= configs.gameSpeed;
+			}
+			else if (random < 50)
+			{
+				this.yCoord += configs.gameSpeed;
+			}
+		}
+	}
+
+	this.grow = function ()
+	{
+		if (this.status === 'sick' && this.life > 0)
+		{
+			this.life -= 1;
+		}
+		else if (this.life === 0)
+		{
+			this.status = 'dead';
+		}
+		else if (this.status === 'fine' && this.fertility < configs.maxFertility)
+		{
+			this.fertility += 1;
+		}
+	}
+
+	this.live = function (index)
+	{
+		if ((this.xCoord < configs.poisonSize || this.xCoord > eleWater.width-configs.poisonSize || this.yCoord < configs.poisonSize || this.yCoord > eleWater.height-configs.poisonSize) && acceptancePercent(1))
+		{
+			this.status = 'sick';
+		}
+
+		for (var i = 0; i < index; i++)
+		{
+			if (Math.abs(this.xCoord-monkeys[i].xCoord) < 2 && Math.abs(this.yCoord-monkeys[i].yCoord) < 2) {
+				if (acceptancePercent(5) && monkeys[i].status === 'fine' && this.status === 'fine' && monkeys[i].fertility === configs.maxFertility && this.fertility === configs.maxFertility)
+				{
+					monkeys.push(new Monkey());
+					monkeys[i].fertility = 0;
+					this.fertility = 0;
+				}
+				else if (acceptancePercent(1) && (monkeys[i].status === 'sick' || this.status === 'sick'))
+				{
+					monkeys[i].status = 'sick';
+					this.status = 'sick';
+				}
+			}
+		}
+	}
+
+	this.draw = function ()
+	{
+		if (this.status === 'fine')
+		{
+			conMonkey.fillStyle = palette.monkeyFine;
+		}
+		else
+		{
+			conMonkey.fillStyle = palette.monkeySick;
+		}
+
+		conMonkey.fillRect(this.xCoord-2,this.yCoord-1,4,2);
+	}
+}
 
 function fillWater ()
 {
- 	conWater.fillStyle = palette.water;
+ 	conWater.fillStyle = palette.poison;
  	conWater.fillRect(0,0,eleWater.width,eleWater.height);
+ 	conWater.fillStyle = palette.water;
+ 	conWater.fillRect(configs.poisonSize,configs.poisonSize,eleWater.width-configs.poisonSize*2,eleWater.height-configs.poisonSize*2);
 };
 
+function acceptancePercent (accept)
+{
+	var value = Math.floor(Math.random() * 100) + 1;
+	return value <= accept;
+};
 
-// initialiseGame();
-// function controller(){
-// 	console.log(fish.length);
-// 	clearFish();
-// 	fishMove();
-// 	evaluateProximity();
-// 	advanceCounter();
-// 	removeDead();
-// 	window.requestAnimationFrame(controller);
-// };
-
-// function fishSpawn(xCoord, yCoord){
-// 	if (!xCoord && !yCoord){
-// 		var xCoord = Math.floor(Math.random() * 700)+50,
-// 			yCoord = Math.floor(Math.random() * 500)+50;
-// 	}
-// 	fish.push({
-// 		xCoord: xCoord,
-// 		yCoord: yCoord,
-// 		status: 'fine',
-// 		fertility: 0,
-// 		life: configs.maxLife
-// 	});
-// };
-
-// function fishMove(){
-// 	fish.forEach(function(dFish){
-// 		if (dFish.xCoord > 780){
-// 			dFish.xCoord -= configs.gameSpeed;
-// 		} else if (dFish.xCoord < 20) {
-// 			dFish.xCoord += configs.gameSpeed;
-// 		} else {
-// 			random = (Math.random() * 100);
-// 			if (random > 50) {
-// 				dFish.xCoord -= configs.gameSpeed;
-// 			} else if (random < 50) {
-// 				dFish.xCoord += configs.gameSpeed;
-// 			}
-// 		}
-
-// 		if (dFish.yCoord > 580){
-// 			dFish.yCoord -= configs.gameSpeed;
-// 		} else if (dFish.yCoord < 20) {
-// 			dFish.yCoord += configs.gameSpeed;
-// 		} else {
-// 			random = (Math.random() * 100);
-// 			if (random > 50) {
-// 				dFish.yCoord -= configs.gameSpeed;
-// 			} else if (random < 50) {
-// 				dFish.yCoord += configs.gameSpeed;
-// 			}
-// 		}
-
-// 		if (dFish.status === 'fine') {
-// 			conMonkey.fillStyle = palette.monkeyFine;
-// 		} else {
-// 			conMonkey.fillStyle = palette.monkeySick;
-// 		}
-
-// 		conMonkey.fillRect(dFish.xCoord-2,dFish.yCoord-1,4,2);
-// 	});
-// };
-
-// function evaluateProximity(){
-// 	fish.forEach(function(dFish, dIndex){
-// 		if ((dFish.xCoord < 30 || dFish.xCoord > 770 || dFish.yCoord < 30 || dFish.yCoord > 770) && acceptancePercent(1)) {
-// 			dFish.status = 'sick';
-// 		}
-// 		fish.forEach(function(aFish, aIndex){
-// 			if (dIndex != aIndex && Math.abs(dFish.xCoord-aFish.xCoord) < 2 && Math.abs(dFish.yCoord-aFish.yCoord) < 2) {
-// 				if (acceptancePercent(5) && aFish.status === 'fine' && dFish.status === 'fine' && aFish.fertility === configs.maxFertility && dFish.fertility === configs.maxFertility) {
-// 					fishSpawn(aFish.xCoord, aFish.yCoord);
-// 					aFish.fertility = 0;
-// 					dFish.fertility = 0;
-// 				} else if (acceptancePercent(1) && (aFish.status === 'sick' || dFish.status === 'sick')) {
-// 					aFish.status = 'sick';
-// 					dFish.status = 'sick';
-// 				}
-// 			}
-// 		})
-// 	})
-// }
-
-// function advanceCounter(){
-// 	fish.forEach(function(dFish){
-// 		if (dFish.status === 'sick' && dFish.life > 0){
-// 			dFish.life -= 1;
-// 		} else if (dFish.life === 0) {
-// 			dFish.status = 'dead';
-// 		} else if (dFish.status === 'fine' && dFish.fertility < configs.maxFertility){
-// 			dFish.fertility += 1;
-// 		}
-// 	})
-// }
-
-// function removeDead(){
-// 	fish.forEach(function(dFish, dIndex){
-// 		if (dFish.status === 'dead') {
-// 			fish.splice(dIndex, 1);
-// 		}
-// 	})
-// }
-
-// function acceptancePercent(accept){
-// 	var value = Math.floor(Math.random() * 100) + 1;
-// 	return value <= accept;
-// };
-
-// function clearFish(){
-// 	conMonkey.clearRect(0,0,800,600);
-// };
-
+function clearMonkeys ()
+{
+	conMonkey.clearRect(0,0,800,600);
+};
