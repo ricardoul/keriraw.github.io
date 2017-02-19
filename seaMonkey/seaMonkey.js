@@ -16,7 +16,22 @@ var eleWater = document.getElementById("waterCanvas")
 ,	monkeys = []
 ;
 
-WindowEventHandlers.onpageshow(console.log('asdf'))
+(function initializer ()
+{
+ 	fillWater();
+	for (var i = configs.startingFish - 1; i >= 0; i--) {
+		monkeys.push({"a":"a"});
+	}
+	console.log(monkeys);
+	controller();
+})();
+
+function controller ()
+{
+	console.log();
+	window.requestAnimationFrame(controller);
+};
+
 
 function fillWater ()
 {
@@ -25,6 +40,16 @@ function fillWater ()
 };
 
 
+// initialiseGame();
+// function controller(){
+// 	console.log(fish.length);
+// 	clearFish();
+// 	fishMove();
+// 	evaluateProximity();
+// 	advanceCounter();
+// 	removeDead();
+// 	window.requestAnimationFrame(controller);
+// };
 
 // function fishSpawn(xCoord, yCoord){
 // 	if (!xCoord && !yCoord){
@@ -127,21 +152,3 @@ function fillWater ()
 // 	conMonkey.clearRect(0,0,800,600);
 // };
 
-// function initialiseGame(){
-// 	fillWater();
-// 	for (var i = configs.startingFish - 1; i >= 0; i--) {
-// 		fishSpawn();
-// 	}
-// 	controller();
-// };
-
-// initialiseGame();
-// function controller(){
-// 	console.log(fish.length);
-// 	clearFish();
-// 	fishMove();
-// 	evaluateProximity();
-// 	advanceCounter();
-// 	removeDead();
-// 	window.requestAnimationFrame(controller);
-// };
