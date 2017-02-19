@@ -5,16 +5,21 @@ var eleWater = document.getElementById('waterCanvas')
 ,	configs = {
 	 	gameSpeed: 1.4
 	,	startingFish: 25
-	,	maxFertility: 250
-	,	startingFertility: 200
+	,	maxFertility: 300
 	,	maxLife: 5000
-	,	poisonSize: 25
+	,	poisonSize: 30
 	}
 ,	palette = {
 	 	water: '#061539'
 	,	poison: '#002E2E'
 	,	monkeyFine: '#FF7400'
 	,	monkeySick: '#27E000'
+	}
+,	stats = {
+	// Coming soon
+		total: 0
+	,	peak: 0
+	,	eldest: 0
 	}
 ,	monkeys = []
 ;
@@ -52,7 +57,7 @@ function Monkey ()
 	this.xCoord = Math.floor(Math.random() * 700)+50;
 	this.yCoord = Math.floor(Math.random() * 500)+50;
 	this.status = 'fine';
-	this.fertility = configs.startingFertility;
+	this.fertility = 0;
 	this.life = configs.maxLife;
 	this.age = 0;
 
@@ -125,10 +130,10 @@ function Monkey ()
 			this.status = 'sick';
 		}
 
-		for (var i = 0; i < index; i++)
+		for (var i = monkeys.length-1; i > index; i--)
 		{
 			if (Math.abs(this.xCoord-monkeys[i].xCoord) < 2 && Math.abs(this.yCoord-monkeys[i].yCoord) < 2) {
-				if (acceptancePercent(25) && monkeys[i].status === 'fine' && this.status === 'fine' && monkeys[i].fertility === configs.maxFertility && this.fertility === configs.maxFertility)
+				if (acceptancePercent(10) && monkeys[i].status === 'fine' && this.status === 'fine' && monkeys[i].fertility === configs.maxFertility && this.fertility === configs.maxFertility)
 				{
 					monkeys.push(new Monkey());
 					console.log(`A new monkey is born! They are ${monkeys.length} monkeys now.`);
