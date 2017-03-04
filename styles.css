@@ -1,0 +1,19 @@
+body {
+	background-color: #000;
+}
+
+ul {
+	list-style: none;
+	text-align: center;
+}
+
+a {
+	color: #FFF;
+	text-decoration: none;
+	font-family: monospace;
+}
+
+a:hover {
+	color: #01D7EB;
+	text-decoration: underline;
+}
