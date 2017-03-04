@@ -1,0 +1,63 @@
+
+<html>
+	<head>
+		<title>MonEsVol</title>
+	</head>
+	<body>
+		<div>
+			<a href="./index.html">Back</a>
+		</div>
+		<div>
+			<canvas id="testingCanvas" width="320" height="568" style="border:1px solid #d3d3d3;"></canvas> 
+		</div>
+		<div>
+			<button onclick="square()"> SQUARE </button> <br>
+			<button onclick="line()"> LINE </button> <br>
+			<button onclick="circle()"> CIRCLE </button> <br>
+			
+		</div>
+		<script>
+			setInterval(second, 1000);
+
+			var c = document.getElementById("testingCanvas");
+
+			var	ctx = c.getContext("2d");
+
+			//ctx.fillStyle = "#d3d3d3";
+			//ctx.fillRect(0,0,320,568);
+
+			function square() {
+				var	grd = ctx.createLinearGradient(0,0,80,80);
+				grd.addColorStop(0,"red");
+				grd.addColorStop(1,"white");
+
+				ctx.fillStyle = grd;
+				ctx.fillRect(10,10,80,80);
+			}
+
+			function line() {
+				ctx.moveTo(90,90);
+				ctx.lineTo(320,100);
+				ctx.lineWidth = 3; 
+				ctx.stroke();
+			}
+
+			function circle() {
+				ctx.beginPath();
+				ctx.arc(160,200,40,0,2*Math.PI);
+				ctx.stroke();
+			}
+
+			function second() {
+				ctx.fillStyle = 'white';
+  				ctx.fillRect(10,220,50,31);
+
+				var now = new Date();
+    				var sec = now.getSeconds();
+				ctx.font = "30px Arial";
+				ctx.fillStyle = "red";
+				ctx.fillText(sec,10,250);
+			}
+		</script>
+	</body>
+</html>
