@@ -2,15 +2,93 @@
 	<head>
 		<link rel="stylesheet" type="text/css" href="../styles.css">
 		<title>Sea Monkey Simulator</title>
+		<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+  <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		<div>
 			<a href="../index.html">Back</a>
 		</div>
-		<div>
+
+		<div id="sky">
+  <div id="sea">
+    <div id="gb"></div>
+    <h1 style="color: white">Sea Monkey Simulator</h1>
+    <button class="btn btn-lg btn-danger" id="continuebtn">Continue</button>
+  </div>
+</div>
+
+<audio id="song" autoplay>
+  <source src="http://scummbar.com/mi2/MI1-CD/26%20-%20Monkey%20Island%20-%20Rock%20Remix%202.mp3">
+</audio>
+		<div id="invisible" style="display: none;">
 			<canvas id="waterCanvas" width="800" height="600" style="border:1px solid #FF0000; margin: auto; position: absolute; left: 0; right: 0; z-index: 0;"></canvas>
 			<canvas id="playCanvas" width="800" height="600" style="border:1px solid #FF0000; margin: auto; position: absolute; left: 0; right: 0; z-index: 1;"></canvas>
 		</div>
 	</body>
 	<script src="./seaMonkey.js"></script>
 </html>
+
+<script>
+$( document ).ready(function() {
+	$( "#continuebtn" ).click(function() {
+	 $('#sea').hide();$('#invisible').show()
+	});
+	    console.log( "dom ready!" );
+});
+</script>
+
+
+
+
+<style type="text/css">
+	body {
+  margin:0;
+  background:#000;
+}
+
+#sky {
+  background:url(https://cdn.rawgit.com/ManzDev/cursos-assets/gh-pages/css3/monkey-sky.png) repeat-X;
+  animation: movebg 9s linear infinite;
+}
+
+#sea {
+  background:url(https://cdn.rawgit.com/ManzDev/cursos-assets/gh-pages/css3/monkey-sea.png) repeat-x;
+  box-shadow:10px 10px 45px RGBA(0,0,0, 0.95) inset;
+  animation: movebg 7s linear infinite;
+  position:relative;
+  top:145px;
+}
+
+@keyframes movebg {
+  0% { background-position:550px }
+  100% { background-position:0 }
+}
+
+#gb {
+  width:104px;
+  height:150px;
+  background:url(https://cdn.rawgit.com/ManzDev/cursos-assets/gh-pages/css3/monkey-guybrush.png) no-repeat;
+  animation:gbwalk 1s steps(6) infinite;
+  margin:auto;
+  position:relative;
+  bottom:34px;
+  /* Ojo, muy costoso en rendimiento */
+  /* filter:drop-shadow(5px 5px 5px #000); */
+}
+
+@keyframes gbwalk {
+  0% { background-position:0 }
+  100% { background-position:-624px }
+}
+</style>
